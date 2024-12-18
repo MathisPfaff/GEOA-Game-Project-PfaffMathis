@@ -7,6 +7,7 @@
 #include "Game.h"
 #include "utils.h"
 #include "structs.h"
+#include "FlyFish.h"
 
 Game::Game(const Window& window)
 	: m_Window{ window }
@@ -193,8 +194,58 @@ void Game::CleanupGameEngine()
 
 void Game::Update(float elapsedSec)
 {
+	if (m_MoveState == MoveState::Translate)
+	{
+		if (m_TranslateForth == true)
+		{
+			Motor translator{ Motor::Translation(200 * elapsedSec, !TwoBlade{m_Position & m_MousePosition}) };
+			m_Position = (translator * m_Position * ~translator).Grade3();
+		}
+		else
+		{
+			Motor translator{ Motor::Translation(200 * elapsedSec, !TwoBlade{m_MousePosition & m_Position}) };
+			m_Position = (translator * m_Position * ~translator).Grade3();
+		}
+	}
+	else if (m_MoveState == MoveState::Rotate)
+	{
+		if (m_RotateClockWise == true)
+		{
+			Motor rotator{ Motor::Rotation(50 * elapsedSec, TwoBlade{0,0,0,0,0,-1}) };
+			Motor translator{ Motor::Translation(-m_MousePosition.VNorm(), !TwoBlade{m_MousePosition & ThreeBlade(0,0,0)}) };
+			Motor total{ translator * rotator * ~translator };
+			m_Position = (total * m_Position * ~total).Grade3();
+		}
+		else
+		{
+			Motor rotator{ Motor::Rotation(50 * elapsedSec, TwoBlade{0,0,0,0,0,1}) };
+			Motor translator{ Motor::Translation(-m_MousePosition.VNorm(), !TwoBlade{m_MousePosition & ThreeBlade(0,0,0)}) };
+			Motor total{ translator * rotator * ~translator };
+			m_Position = (total * m_Position * ~total).Grade3();
+		}
+	}
+
+	if (m_MirrorPower == MirrorState::Activated)
+	{
+		m_MirrorPower = MirrorState::NotPressed;
+		m_TranslateForth = !m_TranslateForth;
+		m_Position = (m_MousePosition * m_Position * ~m_MousePosition).Grade3();
+	}
 }
 
 void Game::Draw() const
 {
+	glClearColor(0.f, 0.f, 0.f, 1.f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	utils::SetColor(Color4f{ 1.f, 1.f, 0.f, 1.f });
+	utils::FillRect(m_Position[0] - 20.f, m_Position[1] - 20.f, 40.f, 40.f);
+	utils::SetColor(Color4f{ 1.f, 0.f, 0.f, 1.f });
+	utils::FillEllipse(m_MousePosition[0], m_MousePosition[1], 10.f, 10.f);
+	utils::SetColor(Color4f{ 0.f, 0.f, 1.f, 1.f });
+	if (m_MirrorPower == MirrorState::Showing)
+	{
+		ThreeBlade mirror{ (m_MousePosition * m_Position * ~m_MousePosition).Grade3() };
+		utils::FillRect(mirror[0] - 20.f, mirror[1] - 20.f, 40.f, 40.f);
+	}
 }

@@ -18,6 +18,11 @@ Game::Game(const Window& window)
 	, m_MaxElapsedSeconds{ 0.1f }
 {
 	InitializeGameEngine();
+	m_Position[0] = (m_Window.width / 2) - 200;
+	m_Position[1] = m_Window.height / 2;
+
+	m_MousePosition[0] = m_Window.width / 2;
+	m_MousePosition[1] = m_Window.height / 2;
 }
 
 Game::~Game()
@@ -194,16 +199,23 @@ void Game::CleanupGameEngine()
 
 void Game::Update(float elapsedSec)
 {
+	if (m_Position[2] <= 0.f)
+	{
+		m_EnergyActive = 1;
+	}
+	
 	if (m_MoveState == MoveState::Translate)
 	{
 		if (m_TranslateForth == true)
 		{
-			Motor translator{ Motor::Translation(200 * elapsedSec, !TwoBlade{m_Position & m_MousePosition}) };
+			ThreeBlade xyPosition{ m_Position[0], m_Position[1], 0.f, m_Position[3] };
+			Motor translator{ Motor::Translation(m_EnergyActive * 200 * elapsedSec, !TwoBlade{xyPosition & m_MousePosition}) };
 			m_Position = (translator * m_Position * ~translator).Grade3();
 		}
 		else
 		{
-			Motor translator{ Motor::Translation(200 * elapsedSec, !TwoBlade{m_MousePosition & m_Position}) };
+			ThreeBlade xyPosition{ m_Position[0], m_Position[1], 0.f, m_Position[3] };
+			Motor translator{ Motor::Translation(m_EnergyActive * 200 * elapsedSec, !TwoBlade{m_MousePosition & xyPosition}) };
 			m_Position = (translator * m_Position * ~translator).Grade3();
 		}
 	}
@@ -211,14 +223,14 @@ void Game::Update(float elapsedSec)
 	{
 		if (m_RotateClockWise == true)
 		{
-			Motor rotator{ Motor::Rotation(50 * elapsedSec, TwoBlade{0,0,0,0,0,-1}) };
+			Motor rotator{ Motor::Rotation(m_EnergyActive * 50 * elapsedSec, TwoBlade{0,0,0,0,0,-1}) };
 			Motor translator{ Motor::Translation(-m_MousePosition.VNorm(), !TwoBlade{m_MousePosition & ThreeBlade(0,0,0)}) };
 			Motor total{ translator * rotator * ~translator };
 			m_Position = (total * m_Position * ~total).Grade3();
 		}
 		else
 		{
-			Motor rotator{ Motor::Rotation(50 * elapsedSec, TwoBlade{0,0,0,0,0,1}) };
+			Motor rotator{ Motor::Rotation(m_EnergyActive * 50 * elapsedSec, TwoBlade{0,0,0,0,0,1}) };
 			Motor translator{ Motor::Translation(-m_MousePosition.VNorm(), !TwoBlade{m_MousePosition & ThreeBlade(0,0,0)}) };
 			Motor total{ translator * rotator * ~translator };
 			m_Position = (total * m_Position * ~total).Grade3();
@@ -231,6 +243,21 @@ void Game::Update(float elapsedSec)
 		m_TranslateForth = !m_TranslateForth;
 		m_Position = (m_MousePosition * m_Position * ~m_MousePosition).Grade3();
 	}
+
+	if (m_EnergyActive == 2)
+	{
+		m_Position[2] -= 0.4f * elapsedSec;
+	}
+	else
+	{
+		m_Position[2] += 0.2f * elapsedSec;
+	}
+	
+
+	if (m_Position[2] > 1.f)
+	{
+		m_Position[2] = 1.f;
+	}
 }
 
 void Game::Draw() const
@@ -238,7 +265,7 @@ void Game::Draw() const
 	glClearColor(0.f, 0.f, 0.f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	utils::SetColor(Color4f{ 1.f, 1.f, 0.f, 1.f });
+	utils::SetColor(Color4f{ 1.f - m_Position[2], 0.f, m_Position[2], 1.f});
 	utils::FillRect(m_Position[0] - 20.f, m_Position[1] - 20.f, 40.f, 40.f);
 	utils::SetColor(Color4f{ 1.f, 0.f, 0.f, 1.f });
 	utils::FillEllipse(m_MousePosition[0], m_MousePosition[1], 10.f, 10.f);

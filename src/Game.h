@@ -8,6 +8,8 @@
 class Game
 {
 private:
+	ThreeBlade m_Position{ 0.f, 0.f, 1.f, 1.f };
+
 	enum class MoveState
 	{
 		None,
@@ -31,6 +33,8 @@ private:
 
 	ThreeBlade m_MousePosition{ 100, 100, 0, 1 };
 	bool m_MouseLeftPressed{ false };
+
+	int m_EnergyActive{ 1 };
 
 public:
 	explicit Game(const Window& window);
@@ -103,12 +107,24 @@ public:
 			m_MouseLeftPressed = true;
 		}
 
+		if (e.button == SDL_BUTTON_RIGHT)
+		{
+			if (m_Position[2] > 0.f)
+			{
+				m_EnergyActive = 2;
+			}
+		}
 	}
 	void ProcessMouseUpEvent(const SDL_MouseButtonEvent& e)
 	{
 		if (e.button == SDL_BUTTON_LEFT)
 		{
 			m_MouseLeftPressed = false;
+		}
+
+		if (e.button == SDL_BUTTON_RIGHT)
+		{
+			m_EnergyActive = 1;
 		}
 	}
 
@@ -133,7 +149,7 @@ private:
 
 
 	//custom members
-	ThreeBlade m_Position{ 0, 0, 0, 1 };
+	
 
 	// FUNCTIONS
 	void InitializeGameEngine();

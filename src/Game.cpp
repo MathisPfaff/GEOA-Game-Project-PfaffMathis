@@ -8,6 +8,7 @@
 #include "utils.h"
 #include "structs.h"
 #include "FlyFish.h"
+#include "Enemy.h"
 
 Game::Game(const Window& window)
 	: m_Window{ window }
@@ -269,7 +270,7 @@ void Game::Draw() const
 	utils::FillRect(m_Position[0] - 20.f, m_Position[1] - 20.f, 40.f, 40.f);
 	utils::SetColor(Color4f{ 1.f, 0.f, 0.f, 1.f });
 	utils::FillEllipse(m_MousePosition[0], m_MousePosition[1], 10.f, 10.f);
-	utils::SetColor(Color4f{ 0.f, 0.f, 1.f, 1.f });
+	utils::SetColor(Color4f{ 1.f, 1.f, 0.f, 1.f });
 	if (m_MirrorPower == MirrorState::Showing)
 	{
 		ThreeBlade mirror{ (m_MousePosition * m_Position * ~m_MousePosition).Grade3() };

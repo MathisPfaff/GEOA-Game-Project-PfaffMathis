@@ -3,6 +3,7 @@
 #include "SDL.h"
 #include "SDL_opengl.h"
 #include "FlyFish.h"
+#include "Enemy.h"
 #include <iostream>
 
 class Game
@@ -103,7 +104,7 @@ public:
 	{
 		if ((e.button == SDL_BUTTON_LEFT) && (m_MouseLeftPressed == false))
 		{
-			m_MousePosition = ThreeBlade(e.x, e.y, 0, 1);
+			m_MousePosition = ThreeBlade(e.x, e.y, 0.f, 1.f);
 			m_MouseLeftPressed = true;
 		}
 

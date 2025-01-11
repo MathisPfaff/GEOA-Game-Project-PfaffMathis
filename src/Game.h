@@ -11,6 +11,14 @@ class Game
 private:
 	ThreeBlade m_Position{ 0.f, 0.f, 1.f, 1.f };
 
+	struct
+	{
+		OneBlade RightBorder;
+		OneBlade LeftBorder;
+		OneBlade UpperBorder;
+		OneBlade BottomBorder;
+	}Borders;
+
 	enum class MoveState
 	{
 		None,

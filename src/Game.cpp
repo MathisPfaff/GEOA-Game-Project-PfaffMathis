@@ -24,6 +24,18 @@ Game::Game(const Window& window)
 
 	m_MousePosition[0] = m_Window.width / 2;
 	m_MousePosition[1] = m_Window.height / 2;
+
+	Borders.RightBorder[0] = -(m_Window.width + 22.f);
+	Borders.RightBorder[1] = 1.f;
+
+	Borders.LeftBorder[0] = 22.f;
+	Borders.LeftBorder[1] = 1.f;
+
+	Borders.UpperBorder[0] = -(m_Window.height + 22.f);
+	Borders.UpperBorder[2] = 1.f;
+
+	Borders.BottomBorder[0] = 22.f;
+	Borders.BottomBorder[2] = 1.f;
 }
 
 Game::~Game()
@@ -200,6 +212,9 @@ void Game::CleanupGameEngine()
 
 void Game::Update(float elapsedSec)
 {
+	
+	//MOVEMENT
+
 	if (m_Position[2] <= 0.f)
 	{
 		m_EnergyActive = 1;
@@ -258,6 +273,28 @@ void Game::Update(float elapsedSec)
 	if (m_Position[2] > 1.f)
 	{
 		m_Position[2] = 1.f;
+	}
+
+	// Border checks
+
+	if ((Borders.LeftBorder & m_Position) < 0.f)
+	{
+		m_Position[0] = m_Window.width / 2;
+		m_Position[1] = m_Window.height / 2;
+	}
+	else if ((Borders.RightBorder & m_Position) > 0.f)
+	{
+		m_Position[0] = m_Window.width / 2;
+		m_Position[1] = m_Window.height / 2;
+	}
+	else if ((Borders.UpperBorder & m_Position) > 0.f)
+	{
+		m_Position[0] = m_Window.width / 2;
+		m_Position[1] = m_Window.height / 2;
+	}else if ((Borders.BottomBorder & m_Position) < 0.f)
+	{
+		m_Position[0] = m_Window.width / 2;
+		m_Position[1] = m_Window.height / 2;
 	}
 }
 

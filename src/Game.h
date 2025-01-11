@@ -45,6 +45,8 @@ private:
 
 	int m_EnergyActive{ 1 };
 
+	Enemy test{};
+
 public:
 	explicit Game(const Window& window);
 	Game(const Game& other) = delete;

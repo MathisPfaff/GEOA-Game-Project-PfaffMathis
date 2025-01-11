@@ -1,12 +1,24 @@
 #pragma once
 #include "FlyFish.h"
-#include "structs.h"
+#include "utils.h"
 
 class Enemy
 {
 private:
 	ThreeBlade m_Position{};
-	
+	float m_StartPos{};
+
+	enum class StartingPosition
+	{
+		Left,
+		Right,
+		Up,
+		Bottom
+	};
+
+	StartingPosition m_StartDirection{};
+
+	bool IsMoving{};
 
 public:
 	Enemy();
@@ -17,7 +29,9 @@ public:
 
 	~Enemy();
 
-	void Update();
+	void Update(float elapsedSec, OneBlade Left, OneBlade Right, OneBlade Up, OneBlade Bottom);
 	
-	void Draw();
+	void Draw() const;
+
+	void GetRandomPos();
 };

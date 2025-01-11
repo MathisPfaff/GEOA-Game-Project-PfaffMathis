@@ -291,11 +291,15 @@ void Game::Update(float elapsedSec)
 	{
 		m_Position[0] = m_Window.width / 2;
 		m_Position[1] = m_Window.height / 2;
-	}else if ((Borders.BottomBorder & m_Position) < 0.f)
+	}
+	else if ((Borders.BottomBorder & m_Position) < 0.f)
 	{
 		m_Position[0] = m_Window.width / 2;
 		m_Position[1] = m_Window.height / 2;
 	}
+
+	//ENEMY
+	test.Update(elapsedSec, Borders.LeftBorder, Borders.RightBorder, Borders.UpperBorder, Borders.BottomBorder);
 }
 
 void Game::Draw() const
@@ -313,4 +317,7 @@ void Game::Draw() const
 		ThreeBlade mirror{ (m_MousePosition * m_Position * ~m_MousePosition).Grade3() };
 		utils::FillRect(mirror[0] - 20.f, mirror[1] - 20.f, 40.f, 40.f);
 	}
+	utils::SetColor(Color4f{ 0.f, 1.f, 0.f, 1.f });
+
+	test.Draw();
 }

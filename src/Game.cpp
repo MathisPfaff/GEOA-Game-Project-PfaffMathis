@@ -9,6 +9,7 @@
 #include "structs.h"
 #include "FlyFish.h"
 #include "Enemy.h"
+#include <vector>
 
 Game::Game(const Window& window)
 	: m_Window{ window }
@@ -299,7 +300,11 @@ void Game::Update(float elapsedSec)
 	}
 
 	//ENEMY
-	test.Update(elapsedSec, Borders.LeftBorder, Borders.RightBorder, Borders.UpperBorder, Borders.BottomBorder);
+
+	for (int index{}; index <= 9; index++)
+	{
+		Enemies[index].Update(elapsedSec, Borders.LeftBorder, Borders.RightBorder, Borders.UpperBorder, Borders.BottomBorder);
+	}
 }
 
 void Game::Draw() const
@@ -319,5 +324,9 @@ void Game::Draw() const
 	}
 	utils::SetColor(Color4f{ 0.f, 1.f, 0.f, 1.f });
 
-	test.Draw();
+
+	for (int index{}; index <= 9; index++)
+	{
+		Enemies[index].Draw();
+	}
 }

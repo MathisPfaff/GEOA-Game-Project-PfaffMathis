@@ -20,6 +20,8 @@ private:
 
 	bool IsMoving{};
 
+	float m_Speed{};
+
 public:
 	Enemy();
 	Enemy(const Enemy& other) = delete;

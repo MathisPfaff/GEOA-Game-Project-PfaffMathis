@@ -5,6 +5,7 @@
 #include "FlyFish.h"
 #include "Enemy.h"
 #include <iostream>
+#include <vector>
 
 class Game
 {
@@ -45,7 +46,7 @@ private:
 
 	int m_EnergyActive{ 1 };
 
-	Enemy test{};
+	Enemy Enemies[10]{};
 
 public:
 	explicit Game(const Window& window);

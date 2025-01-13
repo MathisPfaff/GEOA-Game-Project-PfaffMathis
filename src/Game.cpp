@@ -285,23 +285,36 @@ void Game::Update(float elapsedSec)
 
 	if ((Borders.LeftBorder & m_Position) < 0.f)
 	{
-		m_Position[0] = m_Window.width / 2;
-		m_Position[1] = m_Window.height / 2;
+		Motor translator{ Motor::Translation(Borders.LeftBorder & m_Position, TwoBlade{-1,0,0,0,0,0}) };
+		m_Position = (translator * m_Position * ~translator).Grade3();
+		
+		m_TranslateForth = !m_TranslateForth;
+		m_RotateClockWise = !m_RotateClockWise;
 	}
 	else if ((Borders.RightBorder & m_Position) > 0.f)
 	{
-		m_Position[0] = m_Window.width / 2;
-		m_Position[1] = m_Window.height / 2;
+		Motor translator{ Motor::Translation(Borders.RightBorder & m_Position, TwoBlade{-1,0,0,0,0,0}) };
+		m_Position = (translator * m_Position * ~translator).Grade3();
+
+		m_TranslateForth = !m_TranslateForth;
+		m_RotateClockWise = !m_RotateClockWise;
 	}
-	else if ((Borders.UpperBorder & m_Position) > 0.f)
+
+	if ((Borders.UpperBorder & m_Position) > 0.f)
 	{
-		m_Position[0] = m_Window.width / 2;
-		m_Position[1] = m_Window.height / 2;
+		Motor translator{ Motor::Translation(Borders.UpperBorder & m_Position, TwoBlade{0,-1,0,0,0,0}) };
+		m_Position = (translator * m_Position * ~translator).Grade3();
+
+		m_TranslateForth = !m_TranslateForth;
+		m_RotateClockWise = !m_RotateClockWise;
 	}
 	else if ((Borders.BottomBorder & m_Position) < 0.f)
 	{
-		m_Position[0] = m_Window.width / 2;
-		m_Position[1] = m_Window.height / 2;
+		Motor translator{ Motor::Translation(Borders.BottomBorder & m_Position, TwoBlade{0,-1,0,0,0,0}) };
+		m_Position = (translator * m_Position * ~translator).Grade3();
+
+		m_TranslateForth = !m_TranslateForth;
+		m_RotateClockWise = !m_RotateClockWise;
 	}
 
 	//ENEMY
@@ -347,6 +360,25 @@ void Game::Draw() const
 	if (m_MirrorPower == MirrorState::Showing)
 	{
 		ThreeBlade mirror{ (m_MousePosition * m_Position * ~m_MousePosition).Grade3() };
+
+		if (mirror[0] > 1280.f)
+		{
+			mirror[0] = 1280.f;
+		}
+		else if (mirror[0] < 0.f)
+		{
+			mirror[0] = 0.f;
+		}
+
+		if (mirror[1] > 720.f)
+		{
+			mirror[1] = 720.f;
+		}
+		else if (mirror[1] < 0.f)
+		{
+			mirror[1] = 0.f;
+		}
+
 		utils::FillRect(mirror[0] - 20.f, mirror[1] - 20.f, 40.f, 40.f);
 	}
 	utils::SetColor(Color4f{ 0.f, 1.f, 0.f, 1.f });

@@ -266,11 +266,13 @@ void Game::Update(float elapsedSec)
 
 	if (m_EnergyActive == 2)
 	{
-		m_Position[2] -= 0.4f * elapsedSec;
+		Motor translator{ Motor::Translation(0.5f * elapsedSec, TwoBlade{0,0,-1,0,0,0}) };
+		m_Position = (translator * m_Position * ~translator).Grade3();
 	}
 	else
 	{
-		m_Position[2] += 0.2f * elapsedSec;
+		Motor translator{ Motor::Translation(0.25f * elapsedSec, TwoBlade{0,0,1,0,0,0}) };
+		m_Position = (translator * m_Position * ~translator).Grade3();
 	}
 	
 

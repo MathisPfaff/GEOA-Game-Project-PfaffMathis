@@ -102,3 +102,13 @@ void Enemy::GetRandomPos()
 	m_StartDirection = StartingPosition(rand() % 4);
 	m_Speed = rand() % 151 + 75;
 }
+
+const ThreeBlade& Enemy::GetPos() const
+{
+	return m_Position;
+}
+
+void Enemy::ResetEnemy()
+{
+	IsMoving = false;
+}

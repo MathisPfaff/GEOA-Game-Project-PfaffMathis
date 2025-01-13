@@ -10,6 +10,7 @@
 #include "FlyFish.h"
 #include "Enemy.h"
 #include <vector>
+#include <cmath>
 
 Game::Game(const Window& window)
 	: m_Window{ window }
@@ -37,6 +38,9 @@ Game::Game(const Window& window)
 
 	Borders.BottomBorder[0] = 22.f;
 	Borders.BottomBorder[2] = 1.f;
+
+	m_MaxHealth = 20;
+	m_CurrentHealth = m_MaxHealth;
 }
 
 Game::~Game()
@@ -257,7 +261,6 @@ void Game::Update(float elapsedSec)
 	if (m_MirrorPower == MirrorState::Activated)
 	{
 		m_MirrorPower = MirrorState::NotPressed;
-		m_TranslateForth = !m_TranslateForth;
 		m_Position = (m_MousePosition * m_Position * ~m_MousePosition).Grade3();
 	}
 
@@ -305,12 +308,34 @@ void Game::Update(float elapsedSec)
 	{
 		Enemies[index].Update(elapsedSec, Borders.LeftBorder, Borders.RightBorder, Borders.UpperBorder, Borders.BottomBorder);
 	}
+
+	for (int index{}; index <= 9; index++)
+	{
+		if (CheckOverLapping(m_Position, Enemies[index].GetPos(), 40.f, 40.f))
+		{
+			Enemies[index].ResetEnemy();
+			m_CurrentHealth--;
+		}
+	}
+
+	//GAME OVER CHECK
+
+	if (m_CurrentHealth <= 0)
+	{
+		for (int index{}; index <= 9; index++)
+		{
+			Enemies[index].ResetEnemy();
+			m_CurrentHealth = m_MaxHealth;
+		}
+	}
 }
 
 void Game::Draw() const
 {
 	glClearColor(0.f, 0.f, 0.f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT);
+
+	//PLAYER
 
 	utils::SetColor(Color4f{ 1.f - m_Position[2], 0.f, m_Position[2], 1.f});
 	utils::FillRect(m_Position[0] - 20.f, m_Position[1] - 20.f, 40.f, 40.f);
@@ -324,9 +349,27 @@ void Game::Draw() const
 	}
 	utils::SetColor(Color4f{ 0.f, 1.f, 0.f, 1.f });
 
+	//ENEMY
 
 	for (int index{}; index <= 9; index++)
 	{
 		Enemies[index].Draw();
 	}
+
+	//HEALTH
+
+	utils::SetColor(Color4f{ 1.f, 0.f, 0.f, 1.f });
+	utils::FillRect(20.f, m_Window.height - 40.f, m_CurrentHealth * 7.f, 20.f);
+
+	utils::SetColor(Color4f{ 1.f, 1.f, 1.f, 1.f });
+	utils::DrawRect(20.f, m_Window.height - 40.f, m_MaxHealth * 7.f, 20.f, 2.f);
+}
+
+bool Game::CheckOverLapping(const ThreeBlade& playerPos, const ThreeBlade& enemyPos, float playerWidth, float enemyWidth) const
+{
+	bool xOverlap = std::abs(playerPos[0] - enemyPos[0]) <= ((playerWidth / 2.f) + (enemyWidth / 2.f));
+
+	bool yOverlap = std::abs(playerPos[1] - enemyPos[1]) <= ((playerWidth / 2.f) + (enemyWidth / 2.f));
+	
+	return xOverlap && yOverlap;
 }

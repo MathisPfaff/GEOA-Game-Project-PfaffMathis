@@ -36,4 +36,8 @@ public:
 	void Draw() const;
 
 	void GetRandomPos();
+
+	const ThreeBlade& GetPos() const;
+
+	void ResetEnemy();
 };

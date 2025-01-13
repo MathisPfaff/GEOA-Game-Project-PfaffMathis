@@ -48,6 +48,9 @@ private:
 
 	Enemy Enemies[10]{};
 
+	int m_MaxHealth{};
+	int m_CurrentHealth{};
+
 public:
 	explicit Game(const Window& window);
 	Game(const Game& other) = delete;
@@ -144,6 +147,8 @@ public:
 	{
 		return m_Viewport;
 	}
+
+	bool CheckOverLapping(const ThreeBlade& playerPos, const ThreeBlade& enemyPos, float playerWidth, float enemyWidth) const;
 
 private:
 	// DATA MEMBERS

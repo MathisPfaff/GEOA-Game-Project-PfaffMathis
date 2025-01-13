@@ -6,6 +6,7 @@ class Enemy
 {
 private:
 	ThreeBlade m_Position{};
+	ThreeBlade m_PillarPos{};
 	float m_StartPos{};
 
 	enum class StartingPosition
@@ -21,6 +22,8 @@ private:
 	bool IsMoving{};
 
 	float m_Speed{};
+
+	bool m_Rotator{};
 
 public:
 	Enemy();

@@ -381,7 +381,7 @@ void Game::Draw() const
 
 		utils::FillRect(mirror[0] - 20.f, mirror[1] - 20.f, 40.f, 40.f);
 	}
-	utils::SetColor(Color4f{ 0.f, 1.f, 0.f, 1.f });
+	
 
 	//ENEMY
 
